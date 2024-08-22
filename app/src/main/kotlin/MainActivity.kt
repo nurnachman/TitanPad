@@ -1,4 +1,4 @@
-package us.chronovir.qinpad
+package com.nurnachman.titanpad
 
 import android.content.Intent
 import android.provider.Settings

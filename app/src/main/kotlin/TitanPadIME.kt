@@ -1,4 +1,4 @@
-package us.chronovir.qinpad
+package com.nurnachman.titanpad
 
 import android.content.Context
 import android.inputmethodservice.InputMethodService
@@ -9,7 +9,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
 
-class QinPadIME : InputMethodService() {
+class TitanPadIME : InputMethodService() {
     private var currentType = InputType.TYPE_CLASS_TEXT
     private var ic: InputConnection? = null
     private val kpTimeout = 500 //single-char input timeout
@@ -24,20 +24,20 @@ class QinPadIME : InputMethodService() {
     //layoutIconsNormal, layoutIconsCaps and layouts must match each other
     private val layoutIconsNormal = arrayOf(R.drawable.ime_hebrew_normal, R.drawable.ime_latin_normal, R.drawable.ime_numbers_normal)
     private val layoutIconsCaps = arrayOf(R.drawable.ime_hebrew_caps, R.drawable.ime_latin_caps, R.drawable.ime_numbers_normal)
+
     private val layouts = arrayOf(
-        arrayOf( //hebrew
+        arrayOf( // Hebrew
             " ", "\$€₪%^&'~/#<>[]{}",
-            "ש@", "נ.", "ב8",
-            "ג5", "ק2", "כ6", "ע*",
-            "י#", "ן_", "ח+", "ל\"", "ך'", "צ?", "מ,", "ם/", "פ:", "ת0","ר3", "ד4", "א)" ,"ו-", "ה9", "ףץ1", "ס7", "ט(", "ז!", "\n"
+            "ש", "נ", "ב", "ג", "ק", "כ", "ע", "י", "ן", "ח", "ל", "ך", "צ", "מ", "ם", "פ", "ת","ר", "ד", "א" ,"ו", "ה", "ףץ", "ס", "ט", "ז!", 
+            "\n"
         ),
-        arrayOf( //English
+        arrayOf( // English
             " ", "\$€₪%^&'~/#<>[]{}",
-            "a@", "b.", "c8",
-            "d5", "e2", "f6", "g*",
-            "h#", "i_", "j+", "k\"", "l'", "m?", "n,", "o/", "p:", "q0","r3", "s4", "t(" ,"u-", "v9", "w1'", "x7", "y)", "z!", "\n"
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q","r", "s", "t" ,"u", "v", "w'", "x", "y", "z", 
+            "\n"
         )
     )
+
     private var currentLayout: Array<String>? = null
 
     private fun resetRotator() {
@@ -47,7 +47,7 @@ class QinPadIME : InputMethodService() {
     }
 
     private fun updateCurrentStatusIcon() {
-        val icon = if(caps) layoutIconsCaps[currentLayoutIndex] else layoutIconsNormal[currentLayoutIndex]
+        val icon = if (caps) layoutIconsCaps[currentLayoutIndex] else layoutIconsNormal[currentLayoutIndex]
         hideStatusIcon()
         showStatusIcon(icon)
     }
@@ -91,7 +91,7 @@ class QinPadIME : InputMethodService() {
     override fun onStartInput(info: EditorInfo, restarting: Boolean) {
         super.onStartInput(info, restarting)
         currentType = info.inputType
-        if(currentType == 0 || currentType and EditorInfo.TYPE_MASK_CLASS == EditorInfo.TYPE_CLASS_PHONE)
+        if (currentType == 0 || currentType and EditorInfo.TYPE_MASK_CLASS == EditorInfo.TYPE_CLASS_PHONE)
             onFinishInput()
         else {
             ic = this.currentInputConnection
@@ -111,14 +111,14 @@ class QinPadIME : InputMethodService() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if(ic == null) {
+        if (ic == null) {
             resetRotator()
             return false
         }
         val digit = kkToDigit(keyCode)
         var pound = false
         var star = false
-        if(digit > 28) {
+        if (digit > 28) {
             when(keyCode) {
             ///    KeyEvent.KEYCODE_BACK -> return handleBack(event)
                 KeyEvent.KEYCODE_DEL -> return handleDelete(event)
@@ -133,13 +133,13 @@ class QinPadIME : InputMethodService() {
 
         when(currentType and InputType.TYPE_MASK_CLASS) {
             InputType.TYPE_CLASS_NUMBER -> {
-                if(pound)
+                if (pound)
                     ic!!.commitText(".", 1)
-                else if(!star)
+                else if (!star)
                     ic!!.commitText(Integer.toString(digit), 1)
                 return true
             }
-            else -> if(lockFlag == 0) {
+            else -> if (lockFlag == 0) {
                 event.startTracking()
                 return handleTextInput(digit, star, pound)
             } else
@@ -149,7 +149,7 @@ class QinPadIME : InputMethodService() {
 
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
         val digit = kkToDigit(keyCode)
-        if(digit > 9) {
+        if (digit > 9) {
             resetRotator()
             return false
         }
@@ -190,6 +190,7 @@ class QinPadIME : InputMethodService() {
             requestHideSelf(0)
             return false
         }
+        
         if (ic!!.getTextBeforeCursor(1, 0).isEmpty()) {
             ic!!.sendKeyEvent(ev)
             return false
@@ -202,17 +203,17 @@ class QinPadIME : InputMethodService() {
     private fun nextLang() {
         val maxInd = layouts.size - 1
         currentLayoutIndex++
-        if(currentLayoutIndex > maxInd) currentLayoutIndex = 0
+        if (currentLayoutIndex > maxInd) currentLayoutIndex = 0
         currentLayout = layouts[currentLayoutIndex]
         updateCurrentStatusIcon()
         resetRotator()
     }
 
     private fun handleTextInput(digit: Int, star: Boolean, pound: Boolean): Boolean {
-        if(star) {
+        if (star) {
             caps = !caps
             updateCurrentStatusIcon()
-        } else if(pound) {
+        } else if (pound) {
             nextLang()
         } else {
             var targetSequence: CharSequence
@@ -220,24 +221,24 @@ class QinPadIME : InputMethodService() {
             val selection = currentLayout!![digit]
 
             rotResetHandler.removeCallbacksAndMessages(null)
-            if(digit != cachedDigit) {
+            if (digit != cachedDigit) {
                 resetRotator()
                 cachedDigit = digit
             } else {
                 rotationMode = true //mark that we're going to delete the next char
                 rotIndex++
-                if(rotIndex >= selection.length)
+                if (rotIndex >= selection.length)
                     rotIndex = 0
             }
+
             rotResetHandler.postDelayed({ resetRotator() }, kpTimeout.toLong())
 
             targetSequence = selection.subSequence(rotIndex, rotIndex + 1)
-            if(rotationMode)
-                ic!!.deleteSurroundingText(1, 0)
-            if(caps)
-                targetSequence = targetSequence.toString().toUpperCase()
+            if (rotationMode) ic!!.deleteSurroundingText(1, 0)
+            if (caps) targetSequence = targetSequence.toString().toUpperCase()
             ic!!.commitText(targetSequence, 1)
         }
+        
         return true
     }
 }

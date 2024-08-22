@@ -2,12 +2,12 @@
 
 
 # TitanPad - simple and lightweight keyboard app for Unihertz Titan Pocket and compatible keypad Android phones
-Forked from https://gitlab.com/suborg/qinpad.
+Forked from https://github.com/AshiVered/TitanPad.
 # Features
 
-- Two layouts: Engish and Hebrew.
-- Layout switching with `alt` key, Caps switching with `shift` key.
-- Special character input in `sym` key.
+- Two layouts: Engish and Hebrew (modified from the AshiVered layouts).
+- Layout switching with `alt` key; Caps switching with `shift` key.
+- Special character input with `sym` key.
 - Non-invasive passing input control to the system in number entry fields.
 
 
@@ -32,6 +32,6 @@ adb install [your_new_apk]
 
 # Initial setup
 
-Start the keyboard from the main menu. You'll be taken to the standard Android input method selection dialog (hidden by default on Xiaomi Qin 1s). Set the mark on QinPad and remove it from the stock keyboard.
+Launch the app. You'll be taken to the standard Android input method selection dialog. Select TitanPad and deselect the stock keyboard.
 
-You'll need to do this after each version update.
+You'll need to setup after each version update.
